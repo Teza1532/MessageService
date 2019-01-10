@@ -5,7 +5,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Context\**" />
+    <Compile Remove="Models\**" />
+    <Compile Remove="Repositories\**" />
+    <Content Remove="Context\**" />
+    <Content Remove="Models\**" />
+    <Content Remove="Repositories\**" />
+    <EmbeddedResource Remove="Context\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="Repositories\**" />
+    <None Remove="Context\**" />
+    <None Remove="Models\**" />
+    <None Remove="Repositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MessageService.Data\MessageService.Data.csproj" />
   </ItemGroup>
 
 </Project>
