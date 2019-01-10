@@ -1,21 +1,28 @@
-﻿using Messaging.Repositories;
+﻿using MessageService.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace MessagingService.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IMessageRepository _MessageRepository;
+        private readonly ICustomerRepository _CustomerRepository;
+        private readonly IStaffRepository _StaffRepository;
 
-        public HomeController(IMessageRepository MessageRepository)
+
+        public HomeController(IMessageRepository MessageRepository, ICustomerRepository CustomerRepository, IStaffRepository StaffRepository)
         {
             _MessageRepository = MessageRepository;
+            _CustomerRepository = CustomerRepository;
+            _StaffRepository = StaffRepository;
         }
 
         public IActionResult Index()
         {
-            var Message = 
+            var customer = _CustomerRepository.;
+
+
+            ViewData["Message"] = _MessageRepository.CustomerMessages(customerID);
 
             return View();
         }

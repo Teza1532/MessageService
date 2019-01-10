@@ -26,6 +26,9 @@ namespace MessagingService
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddDefaultIdentity<>()
+                .AddEntityFrameworkStores<ApplicationDBContext>;
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

@@ -15,6 +15,11 @@ namespace MessageService.Data.Repositories
             _context = context;
         }
 
+        public Customer CustomerGetInfo(int CustomerID)
+        {
+            return _context.Customers.Find(CustomerID);
+        }
+
         public void InsertCustomer(Customer Customer)
         {
             _context.Customers.Add(Customer);

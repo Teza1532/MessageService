@@ -4,9 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace Messaging.Repositories
+namespace MessageService.Data.Repositories
 {
     public class MessageRepository : IMessageRepository
     {
