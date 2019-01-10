@@ -1,7 +1,8 @@
-﻿using MessageService.Models.Models;
-using MessagingService.Data.Context;
+﻿using MessageService.Data.Context;
+using MessageService.Models.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using MessageService.Data.DTO;
 
 namespace MessageService.Data.Repositories
 {
@@ -15,7 +16,7 @@ namespace MessageService.Data.Repositories
             _context = context;
         }
 
-        public Customer CustomerGetInfo(int CustomerID)
+        public CustomerDTO CustomerGetInfo(int CustomerID)
         {
             return _context.Customers.Find(CustomerID);
         }

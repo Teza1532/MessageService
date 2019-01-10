@@ -1,11 +1,8 @@
 ﻿using MessageService.Models.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace MessagingService.Data.Context
+namespace MessageService.Data.Context
 {
     public class MessageServiceContext : DbContext
     {

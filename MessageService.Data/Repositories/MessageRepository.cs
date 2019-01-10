@@ -1,5 +1,5 @@
-﻿using MessageService.Models.Models;
-using MessagingService.Data.Context;
+﻿using MessageService.Data.Context;
+using MessageService.Models.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

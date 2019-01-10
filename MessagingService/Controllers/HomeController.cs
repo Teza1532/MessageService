@@ -19,7 +19,7 @@ namespace MessagingService.Controllers
 
         public IActionResult Index()
         {
-            var customer = _CustomerRepository.;
+            var customer = _CustomerRepository.
 
 
             ViewData["Message"] = _MessageRepository.CustomerMessages(customerID);
