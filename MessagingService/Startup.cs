@@ -39,72 +39,79 @@ namespace MessagingService
             services.AddDbContext<MessageServiceContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //    .AddJwtBearer(options =>
-            //   {
-            //       options.TokenValidationParameters = new TokenValidationParameters
-            //       {
-            //           ValidateIssuer = true,
-            //           ValidIssuer = Configuration["Jwt:CustomerIssuer"],
+            services
+                .AddAuthentication() //No default Parameter for Authentication as there is two different schemers to do the Authentication.
+                .AddJwtBearer("Customer", options =>
+               {
+                   options.TokenValidationParameters = new TokenValidationParameters
+                   {
+                       ValidateIssuer = true,
+                       ValidIssuer = Configuration["Jwt:CustomerIssuer"],
 
-            //           ValidateAudience = true,
-            //           ValidAudience = Configuration["Jwt:CustomerAudience"],
+                       ValidateAudience = true,
+                       ValidAudience = Configuration["Jwt:CustomerAudience"],
 
-            //           ValidateLifetime = true,
+                       ValidateLifetime = true,
 
-            //           ValidateIssuerSigningKey = true,
-            //           IssuerSigningKey = new SymmetricSecurityKey(
-            //               Encoding.UTF8.GetBytes("this Key"))
-            //       };
-            //       options.SaveToken = true;
-            //   });
-            //   // .AddJwtBearer(options =>
-            //   //{
-            //   //    options.TokenValidationParameters = new TokenValidationParameters
-            //   //    {
-            //   //        ValidateIssuer = true,
-            //   //        ValidIssuer = Configuration["Jwt:StaffIssuer"],
+                       ValidateIssuerSigningKey = true,
+                       IssuerSigningKey = new SymmetricSecurityKey(
+                           Encoding.UTF8.GetBytes("this Key"))
+                   };
+                   options.SaveToken = true;
+               })
+               //OverLoad the AddJwt with seperate JwtBearer tokens
+             .AddJwtBearer("Customer", options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = Configuration["Jwt:StaffIssuer"],
 
-            //   //        ValidateAudience = true,
-            //   //        ValidAudience = Configuration["Jwt:StaffAudience"],
+                    ValidateAudience = true,
+                    ValidAudience = Configuration["Jwt:StaffAudience"],
 
-            //   //        ValidateLifetime = true,
+                    ValidateLifetime = true,
 
-            //   //        ValidateIssuerSigningKey = true,
-            //   //        IssuerSigningKey = new SymmetricSecurityKey(
-            //   //        Encoding.UTF8.GetBytes("this Key"))
-            //   //    };
-            //   //    options.SaveToken = true;
-            // //  });
-            
-            //services.AddDataProtection()
-            //    .PersistKeysToFileSystem(new DirectoryInfo(".."))
-            //    .SetApplicationName("CustumerSecurity").SetApplicationName("StaffSecurity");
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes("this Key"))
+                };
+                options.SaveToken = true;
+            });
 
-            //services.ConfigureApplicationCookie(options =>
-            //{
-            //    options.Cookie.Name = "MessageServiceCookie";
-            //});
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(".."))
+                .SetApplicationName("CustumerSecurity").SetApplicationName("StaffSecurity");
 
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("Staff", policy => policy.RequireClaim("StaffID"));
-            //    options.AddPolicy("Customer", policy => policy.RequireClaim("UserID"));
-            //});
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = "MessageServiceCookie";
+            });
 
-            services.AddMvc()
-                //options =>
-            //{
-                //var policy = new AuthorizationPolicyBuilder()
-                //    .RequireAuthenticatedUser()
-                //    .Build();
-                //options.Filters.Add(new AuthorizeFilter(policy));
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder() //I change the Default policy so that it checks both schemes before exiting
+                .RequireAuthenticatedUser()
+                .AddAuthenticationSchemes("Staff", "Customer")
+                .Build();
 
-            services.AddScoped<IMessageRepository, MessageRepository>();
-            services.AddScoped<IStaffRepository, StaffRepository>();
-            services.AddScoped<ICustomerRepository, CustomerRepository>();
+                //We have two policies that we can now use on our Actions.
+                options.AddPolicy("Staff", policy => policy.RequireClaim("StaffID"));
+                options.AddPolicy("Customer", policy => policy.RequireClaim("UserID"));
+            });
 
+            services.AddMvc(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                      .RequireAuthenticatedUser()
+                      .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+                services.AddScoped<IMessageRepository, MessageRepository>();
+                services.AddScoped<IStaffRepository, StaffRepository>();
+                services.AddScoped<ICustomerRepository, CustomerRepository>();            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -120,15 +127,15 @@ namespace MessagingService
                 app.UseHsts();
             }
 
-            //app.UseHttpsRedirection();
-            //app.UseStaticFiles();
-            //app.UseCookiePolicy();
-            //app.UseAuthentication();
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseCookiePolicy();
+            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Route/action=Index}");
             });
         }
     }

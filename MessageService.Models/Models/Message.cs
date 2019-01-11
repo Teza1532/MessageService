@@ -13,7 +13,7 @@ namespace MessageService.Models.Models
         public string message { get; set; }
         public DateTime Sent { get; set; }
         public bool Deleted { get; set; }
-        public int SentbyID { get; set; }
+        public string SentbyUserName { get; set; }
         public DateTime LastUpdated { get; set; }
         public virtual Customer Customer { get; set; }
         public virtual Staff Staff { get; set; }

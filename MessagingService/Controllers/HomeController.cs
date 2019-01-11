@@ -10,7 +10,6 @@ namespace MessagingService.Controllers
         private readonly ICustomerRepository _CustomerRepository;
         private readonly IStaffRepository _StaffRepository;
 
-
         public HomeController(IMessageRepository MessageRepository, ICustomerRepository CustomerRepository, IStaffRepository StaffRepository)
         {
             _MessageRepository = MessageRepository;
@@ -18,6 +17,8 @@ namespace MessagingService.Controllers
             _StaffRepository = StaffRepository;
         }
 
+        [Route("Home")]
+        [Route("Home/Index")]
         public IActionResult Index()
         {       
             //ViewData["Message"]  = _MessageRepository.CustomerMessages(customerID);

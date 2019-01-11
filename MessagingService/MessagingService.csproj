@@ -6,23 +6,28 @@
 
   <ItemGroup>
     <Compile Remove="Context\**" />
-    <Compile Remove="Models\**" />
+    <Compile Remove="Model\**" />
     <Compile Remove="Repositories\**" />
     <Content Remove="Context\**" />
-    <Content Remove="Models\**" />
+    <Content Remove="Model\**" />
     <Content Remove="Repositories\**" />
     <EmbeddedResource Remove="Context\**" />
-    <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="Model\**" />
     <EmbeddedResource Remove="Repositories\**" />
     <None Remove="Context\**" />
-    <None Remove="Models\**" />
+    <None Remove="Model\**" />
     <None Remove="Repositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\StaffMessage\StaffMessage.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,10 +43,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Model\" />
   </ItemGroup>
 
   <ItemGroup>

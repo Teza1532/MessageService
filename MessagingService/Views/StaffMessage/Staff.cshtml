@@ -1,0 +1,35 @@
+﻿
+<link href="~/styles/Staff.css" rel="stylesheet" type="text/css" />
+
+
+@{
+    ViewData["Title"] = "Staff";
+    int Row = 1;
+}
+
+<h2>Staff</h2>
+
+<table>
+    @foreach (var cust in ViewData["Cust"] as IList<CustomerModel>)
+    {
+
+        <tr>
+            <td>
+                @Row
+            </td>
+            <td>
+                @cust.CustomerName
+            </td>
+            <td>
+                @cust.sent 
+            </td>
+        </tr>
+        {
+            Row = Row + 1;
+        }
+
+    }
+</table>
+
+<style>
+</style>

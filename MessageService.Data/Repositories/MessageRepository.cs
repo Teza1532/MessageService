@@ -1,6 +1,7 @@
 ﻿using MessageService.Data.Context;
 using MessageService.Data.DTO;
 using MessageService.Models.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -26,9 +27,11 @@ namespace MessageService.Data.Repositories
                     MessageID = s.CustomerID,
                     message = s.message,
                     Sent = s.Sent,
-                    SentbyID = s.SentbyID,
+                    SentbyUserName = s.SentbyUserName,
                     CustomerID = s.Customer.CustomerID,
-                    StaffID = s.Staff.StaffID
+                    StaffID = s.Staff.StaffID,
+                    StaffName = s.Staff.StaffName,
+                    CustomerName = s.Customer.CustomerName
                 })
                 .Where(x => x.CustomerID == CustomerID)
                 .OrderBy(x => x.Sent.TimeOfDay)
@@ -45,7 +48,9 @@ namespace MessageService.Data.Repositories
                     MessageID = s.MessageID,
                     message = s.message,
                     Sent = s.Sent,
-                    SentbyID = s.SentbyID
+                    SentbyUserName = s.SentbyUserName,
+                    StaffName = s.Staff.StaffName,
+                    CustomerName = s.Customer.CustomerName
                 })            
                 .Where(s => s.StaffID == StaffID 
                         && s.Deleted == false)
@@ -60,7 +65,7 @@ namespace MessageService.Data.Repositories
             {
                 message = Message.message,
                 Sent = DateTime.Now,
-                SentbyID = Message.SentbyID,
+                SentbyUserName = Message.SentbyUserName,
                 CustomerID = Message.CustomerID,
                 StaffID = Message.StaffID
             });
@@ -68,10 +73,10 @@ namespace MessageService.Data.Repositories
             Save();
         }
 
-        public void DeleteMessage(int MessageID, int SentByID)
+        public void DeleteMessage(int MessageID, string SentbyUserName)
         {
             Message message = _context.Messages
-                  .Where(m => m.MessageID == MessageID && m.SentbyID == SentByID)
+                  .Where(m => m.MessageID == MessageID && m.SentbyUserName == SentbyUserName)
                   .First();
             
             message.LastUpdated = DateTime.Now;
@@ -111,7 +116,7 @@ namespace MessageService.Data.Repositories
         IEnumerable<MessageDTO> CustomerMessages(int CustomerID);
         IEnumerable<MessageDTO> StaffMessages(int StaffID);
         void InsertMessage(MessageDTO Message);
-        void DeleteMessage(int MessageID, int sentByID);
+        void DeleteMessage(int MessageID, string sentByUserName);
         void Save();
     }
 }

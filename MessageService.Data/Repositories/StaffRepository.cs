@@ -1,6 +1,7 @@
 ﻿using MessageService.Data.Context;
 using MessageService.Data.DTO;
 using MessageService.Models.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace MessageService.Data.Repositories
         {
             _context = context;
         }
+
         public StaffDTO GetStaff(int StaffID)
         {
             return _context.Staffs.Select(c => new StaffDTO

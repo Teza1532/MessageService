@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MessageService.Data.DTO
+﻿namespace MessageService.Data.DTO
 {
     public class StaffDTO
     {

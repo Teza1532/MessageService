@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MessageService.Data.DTO;
+﻿using MessageService.Data.DTO;
 using MessageService.Data.Repositories;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MessageService.Web.Controllers
-{   [Authorize]
+{
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MessageController : ControllerBase
@@ -45,22 +44,21 @@ namespace MessageService.Web.Controllers
         {
             _MessageRepository.InsertMessage(Message);
         }
-
         
         // DELETE api/message?id=5
         [HttpDelete]
         public void Delete(int MessageID)
         {
-            int sentByID = 0;
+            string sentByUserName;
 
-            int.TryParse(User.Claims.First(u => u.Type == "StaffId").Value, out sentByID);
+            sentByUserName = User.Claims.First(u => u.Type == "StaffName").Value;
 
-            if (sentByID == 0)
+            if (String.IsNullOrEmpty(sentByUserName))
             {
-                int.TryParse(User.Claims.First(u => u.Type == "CustomerId").Value, out sentByID);
+                sentByUserName = User.Claims.First(u => u.Type == "CustomerName").Value;
             }
 
-            _MessageRepository.DeleteMessage(MessageID, sentByID);
+            _MessageRepository.DeleteMessage(MessageID, sentByUserName);
         }
     }
 }
