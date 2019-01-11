@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MessagingService.Controllers
 {
+
     public class HomeController : Controller
     {
         private readonly IMessageRepository _MessageRepository;
@@ -18,10 +19,7 @@ namespace MessagingService.Controllers
         }
 
         public IActionResult Index()
-        {
-            var customer = _CustomerRepository;
-
-
+        {       
             //ViewData["Message"]  = _MessageRepository.CustomerMessages(customerID);
 
             return View();

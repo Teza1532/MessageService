@@ -12,7 +12,7 @@ namespace MessageService.Data.Repositories
         private MessageServiceContext _context;
         private bool disposed = false;
 
-        StaffRepository(MessageServiceContext context)
+        public StaffRepository(MessageServiceContext context)
         {
             _context = context;
         }

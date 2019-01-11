@@ -68,10 +68,12 @@ namespace MessageService.Data.Repositories
             Save();
         }
 
-        public void DeleteMessage(int MessageID)
+        public void DeleteMessage(int MessageID, int SentByID)
         {
-            Message message = _context.Messages.Find(MessageID);
-
+            Message message = _context.Messages
+                  .Where(m => m.MessageID == MessageID && m.SentbyID == SentByID)
+                  .First();
+            
             message.LastUpdated = DateTime.Now;
             message.Deleted = true;
 
@@ -109,7 +111,7 @@ namespace MessageService.Data.Repositories
         IEnumerable<MessageDTO> CustomerMessages(int CustomerID);
         IEnumerable<MessageDTO> StaffMessages(int StaffID);
         void InsertMessage(MessageDTO Message);
-        void DeleteMessage(int MessageID);
+        void DeleteMessage(int MessageID, int sentByID);
         void Save();
     }
 }
