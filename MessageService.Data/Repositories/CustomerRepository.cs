@@ -3,6 +3,7 @@ using MessageService.Models.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using MessageService.Data.DTO;
+using System.Linq;
 
 namespace MessageService.Data.Repositories
 {
@@ -16,19 +17,38 @@ namespace MessageService.Data.Repositories
             _context = context;
         }
 
-        public CustomerDTO CustomerGetInfo(int CustomerID)
+        public CustomerDTO GetCustomer(int CustomerID)
         {
-            return _context.Customers.Find(CustomerID);
+            return _context.Customers.Select(c => new CustomerDTO
+            {
+                CustomerID = c.CustomerID,
+                CustomerName = c.CustomerName
+            })
+            .Where(c => c.CustomerID == CustomerID).First();
         }
 
-        public void InsertCustomer(Customer Customer)
+        public void InsertCustomer(CustomerDTO Customer)
         {
-            _context.Customers.Add(Customer);
+            _context.Customers.Add(new Customer
+            {
+                CustomerID = Customer.CustomerID,
+                CustomerName = Customer.CustomerName,
+                LastUpdated = DateTime.Now,
+                Deleted = false
+            });
+
+            Save();
         }
 
-        public void UpdateCustomer(Customer Customer)
+        public void UpdateCustomer(CustomerDTO Customer)
         {
-            _context.Entry(Customer).State = EntityState.Modified;
+            _context.Entry(new Customer
+            {
+                CustomerID = Customer.CustomerID,
+                CustomerName = Customer.CustomerName           
+            }).State = EntityState.Modified;
+
+            Save();
         }
 
         public void DeleteCustomer(int CustomerID)
@@ -36,8 +56,11 @@ namespace MessageService.Data.Repositories
             Customer customer = _context.Customers.Find(CustomerID);
 
             customer.Deleted = true;
+            customer.LastUpdated = DateTime.Now;
 
             _context.Entry(customer).State = EntityState.Modified;
+
+            Save();
         }
 
         protected virtual void Dispose(bool disposing)
@@ -64,12 +87,12 @@ namespace MessageService.Data.Repositories
         }
     }
 
-
     public interface ICustomerRepository : IDisposable
     {
-        void InsertCustomer(Customer customer);
+        CustomerDTO GetCustomer(int customerID);
+        void InsertCustomer(CustomerDTO customer);
         void DeleteCustomer(int customerID);
-        void UpdateCustomer(Customer customer);
+        void UpdateCustomer(CustomerDTO customer);
         void Save();
     }
 }

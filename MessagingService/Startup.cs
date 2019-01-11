@@ -76,6 +76,21 @@ namespace MessagingService
                    };
                    options.SaveToken = true;
                });
+            
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(".."))
+                .SetApplicationName("CustumerSecurity").SetApplicationName("StaffSecurity");
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = "MessageServiceCookie";
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Staff", policy => policy.RequireClaim("StaffID"));
+                options.AddPolicy("Customer", policy => policy.RequireClaim("UserID"));
+            });
 
             services.AddMvc(options =>
             {
@@ -84,16 +99,6 @@ namespace MessagingService
                     .Build();
                 options.Filters.Add(new AuthorizeFilter(policy));
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            services.AddDataProtection()
-                .PersistKeysToFileSystem(new DirectoryInfo(".."))
-                .SetApplicationName("CustumerSecurity").SetApplicationName("StaffSecurity");
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("Staff", policy => policy.RequireClaim("StaffID"));
-                options.AddPolicy("Customer", policy => policy.RequireClaim("UserID"));
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

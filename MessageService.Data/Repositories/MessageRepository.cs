@@ -1,4 +1,5 @@
 ﻿using MessageService.Data.Context;
+using MessageService.Data.DTO;
 using MessageService.Models.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,34 +18,66 @@ namespace MessageService.Data.Repositories
             _context = context;
         }
 
-        public IEnumerable<Message> CustomerMessages(int CustomerID)
+        public IEnumerable<MessageDTO> CustomerMessages(int CustomerID)
         {
-            return _context.Messages.Where(x => x.CustomerID == CustomerID)
-                                    .OrderBy(x => x.sent.TimeOfDay)
-                                    .ThenBy(x => x.sent.Date)
-                                    .ThenBy(x => x.sent.Year);
+            return _context.Messages
+                .Select(s => new MessageDTO
+                {
+                    MessageID = s.CustomerID,
+                    message = s.message,
+                    Sent = s.Sent,
+                    SentbyID = s.SentbyID,
+                    CustomerID = s.Customer.CustomerID,
+                    StaffID = s.Staff.StaffID
+                })
+                .Where(x => x.CustomerID == CustomerID)
+                .OrderBy(x => x.Sent.TimeOfDay)
+                .ThenBy(x => x.Sent.Date)
+                .ThenBy(x => x.Sent.Year);
+
         }
 
-        public IEnumerable<Message> StaffMessages(int StaffID)
+        public IEnumerable<MessageDTO> StaffMessages(int StaffID)
         {
-            return _context.Messages.Where(x => x.StaffID == StaffID)
-                                    .OrderBy(x => x.sent.TimeOfDay)
-                                    .ThenBy(x => x.sent.Date)
-                                    .ThenBy(x => x.sent.Year);
+            return _context.Messages
+                .Select(s => new MessageDTO
+                {
+                    MessageID = s.MessageID,
+                    message = s.message,
+                    Sent = s.Sent,
+                    SentbyID = s.SentbyID
+                })            
+                .Where(s => s.StaffID == StaffID 
+                        && s.Deleted == false)
+                .OrderBy(s => s.Sent.TimeOfDay)
+                .ThenBy(s => s.Sent.Date)
+                .ThenBy(s => s.Sent.Year);
         }
 
-        public void InsertMessage(Message Message)
+        public void InsertMessage(MessageDTO Message)
         {
-            _context.Messages.Add(Message);
+            _context.Messages.Add(new Message
+            {
+                message = Message.message,
+                Sent = DateTime.Now,
+                SentbyID = Message.SentbyID,
+                CustomerID = Message.CustomerID,
+                StaffID = Message.StaffID
+            });
+
+            Save();
         }
 
         public void DeleteMessage(int MessageID)
         {
             Message message = _context.Messages.Find(MessageID);
 
-            message.deleted = true;
+            message.LastUpdated = DateTime.Now;
+            message.Deleted = true;
 
             _context.Entry(message).State = EntityState.Modified;
+
+            Save();
         }
 
         public void Save()
@@ -73,12 +106,10 @@ namespace MessageService.Data.Repositories
 
     public interface IMessageRepository
     {
-        IEnumerable<Message> CustomerMessages(int CustomerID);
-        IEnumerable<Message> StaffMessages(int StaffID);
-        void InsertMessage(Message Message);
+        IEnumerable<MessageDTO> CustomerMessages(int CustomerID);
+        IEnumerable<MessageDTO> StaffMessages(int StaffID);
+        void InsertMessage(MessageDTO Message);
         void DeleteMessage(int MessageID);
         void Save();
     }
-
-
 }

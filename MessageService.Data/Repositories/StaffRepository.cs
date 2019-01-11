@@ -1,7 +1,9 @@
 ﻿using MessageService.Data.Context;
+using MessageService.Data.DTO;
 using MessageService.Models.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 
 namespace MessageService.Data.Repositories
 {
@@ -14,24 +16,48 @@ namespace MessageService.Data.Repositories
         {
             _context = context;
         }
-
-        public void InsertStaff(Staff Staff)
+        public StaffDTO GetStaff(int StaffID)
         {
-            _context.Staffs.Add(Staff);
+            return _context.Staffs.Select(c => new StaffDTO
+            {
+                StaffID = c.StaffID,
+                StaffName = c.StaffName
+            })
+            .Where(c => c.StaffID == StaffID).First();
         }
 
-        public void UpdateStaff(Staff Staff)
+        public void InsertStaff(StaffDTO Staff)
         {
-            _context.Entry(Staff).State = EntityState.Modified;
+            _context.Staffs.Add(new Staff
+            {
+                StaffID = Staff.StaffID,
+                StaffName = Staff.StaffName,
+                LastUpdated = DateTime.Now,
+                Deleted = false
+            });
+        }
+
+        public void UpdateStaff(StaffDTO Staff)
+        {
+            _context.Entry(new Staff
+            {
+                StaffID = Staff.StaffID,
+                StaffName = Staff.StaffName
+
+            }).State = EntityState.Modified;
+
+            Save();
         }
 
         public void DeleteStaff(int StaffID)
         {
             Staff staff = _context.Staffs.Find(StaffID);
 
-            staff.deleted = true;
-
+            staff.Deleted = true;
+            staff.LastUpdated = DateTime.Now;
             _context.Entry(staff).State = EntityState.Modified;
+
+            Save();
         }
 
         protected virtual void Dispose(bool disposing)
@@ -59,8 +85,9 @@ namespace MessageService.Data.Repositories
     }
     public interface IStaffRepository
     {
-        void InsertStaff(Staff Staff);
-        void UpdateStaff(Staff Staff);
-        void DeleteStaff(int StaffID);
+        StaffDTO GetStaff(int staffID);
+        void InsertStaff(StaffDTO staff);
+        void UpdateStaff(StaffDTO staff);
+        void DeleteStaff(int staffID);
     }
 }

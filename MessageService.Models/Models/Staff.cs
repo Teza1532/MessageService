@@ -10,6 +10,6 @@ namespace MessageService.Models.Models
         public string StaffName { get; set; }
         public DateTime LastUpdated { get; set; }
         public virtual ICollection<Message> Messages { get; set; }
-        public bool deleted { get; set; }
+        public bool Deleted { get; set; }
     }
 }
